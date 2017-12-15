@@ -1,0 +1,20 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "description": "测试各种技术点的实现",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/occultskyrong/test.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/occultskyrong/test/issues"
+  },
+  "homepage": "https://github.com/occultskyrong/test#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
