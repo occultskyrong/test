@@ -12,11 +12,13 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-app.use(bodyParser.urlencoded({extended: true}));
-// 加入中间件
-app.use(expressAccessLogger({}));
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
 
-app.get('/test/:id', (req, res)=> {
+// 加入中间件
+app.use(expressAccessLogger());
+
+app.post('/test/:id', (req, res)=> {
     console.info('————————',
         'originalUrl:', req.originalUrl,
         'query:', req.query,
@@ -29,3 +31,9 @@ app.get('/test/:id', (req, res)=> {
 app.listen(3000, ()=> {
     console.info('------- 启动服务 -------');
 });
+
+
+/*
+ * 测试说明
+ * 浏览器中访问 POST localhost:3000/test/123?a=1 body={b:2}
+ */
