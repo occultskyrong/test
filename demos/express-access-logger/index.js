@@ -6,10 +6,17 @@
 
 'use strict';
 
+/*
+ * 参考文档
+ * http://nodejs.cn/api/process.html#process_process_hrtime_time
+ * https://github.com/expressjs/body-parser#bodyparserjsonoptions
+ * http://expressjs.com/en/4x/api.html#req.body
+ */
+
 Date.prototype.format = DateForm; // Date原型链绑定时间格式化函数
 
 /**
- * 基于log4js,绑定到express的日志文件中间件
+ * 绑定到express的日志文件中间件
  * @param {object} option 配置信息
  * @return {function(*, *, *)} 标准请求-响应拦截结构
  */
@@ -18,7 +25,7 @@ module.exports = (option = {})=> {
     const TIME_FORMAT = 'yyyy-MM-dd hh:mm:ss';
     let log = {};
     return (req, res, next)=> {
-        const startedAt = process.hrtime(); // 请求高精度时间
+        const startedAt = process.hrtime(); // 获取高精度时间
         log = {
             uuid: req.header(option.uuid),
             ip: getIP(req),
@@ -73,19 +80,63 @@ function getOption(option) {
         o.uuid = 'uuid';
     }
     // 日志记录的方式
-    if ('logType' in option) {
-        const logType = option.logType;
-        if (logType === 'console') {
-            // o.log=console.log
-        } else if (typeof logType === 'function') {
-
-        } else if (1) {
-
+    if ('logger' in option) {
+        const logger = option.logger;
+        if (logger === 'console') {
+            o.log = console.log;
+        } else if (typeof logger === 'function') {
+            o.log = option.logger;
+        } else if (logger === 'log4js') {
+            const log4js = getLog4js('log4jsConfig' in option ? option.log4jsConfig : undefined);
+            o.log = log4js.getLogger('log4jsLogger' in option ? option.log4jsLogger : 'access').info;
         }
     } else {
         o.log = console.log; // 默认为控制台输出
     }
     return o;
+}
+
+/**
+ * 生成log4js实例
+ * @param {object} config
+ * @return {log4js}
+ */
+function getLog4js(config) {
+    const __ = require('log4js');
+    __.configure(getLog4jsConfig(config));
+    return __;
+}
+
+/**
+ * 获取log4js默认配置
+ * @param {object} config
+ * @return {*}
+ */
+function getLog4jsConfig(config) {
+    const path = require('path');
+    if (config) {
+        return config;
+    } else {
+        // log4js默认配置
+        return {
+            appenders: {
+                out: { // 控制台输出
+                    type: 'stdout',
+                }, access: {// 访问日志
+                    type: 'dateFile',
+                    filename: path.join(__dirname, '../logs/access.log'),
+                },
+            }, categories: {
+                default: {
+                    appenders: ['access', 'out'],
+                    level: 'info',
+                }, access: {
+                    appenders: ['access', 'out'],
+                    level: 'info',
+                },
+            },
+        };
+    }
 }
 
 /**
