@@ -36,7 +36,7 @@ app.post('/test/:id', (req, res)=> {
         'body:', req.body,
         'params:', req.params
     );
-    // res.json(true);
+    res.json(true);
 });
 
 app.listen(3000, ()=> {

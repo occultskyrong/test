@@ -88,7 +88,9 @@ function getOption(option) {
             o.log = option.logger;
         } else if (logger === 'log4js') {
             const log4js = getLog4js('log4jsConfig' in option ? option.log4jsConfig : undefined);
-            o.log = log4js.getLogger('log4jsLogger' in option ? option.log4jsLogger : 'access').info;
+            const logger = log4js.getLogger('log4jsLogger' in option ? option.log4jsLogger : 'access');
+            logger.level = 'info';
+            o.log = logger.info;
         }
     } else {
         o.log = console.log; // 默认为控制台输出
@@ -124,7 +126,7 @@ function getLog4jsConfig(config) {
                     type: 'stdout',
                 }, access: {// 访问日志
                     type: 'dateFile',
-                    filename: path.join(__dirname, '../logs/access.log'),
+                    filename: path.join(__dirname, './logs/access.log'),
                 },
             }, categories: {
                 default: {
