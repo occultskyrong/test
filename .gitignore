@@ -13,4 +13,4 @@ package-lock.json
 
 # logs
 logs/*
-*/logs/*
+demos/*/logs/*.log
