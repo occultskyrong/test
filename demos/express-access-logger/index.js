@@ -90,7 +90,7 @@ function getOption(option) {
             const log4js = getLog4js('log4jsConfig' in option ? option.log4jsConfig : undefined);
             const logger = log4js.getLogger('log4jsLogger' in option ? option.log4jsLogger : 'access');
             logger.level = 'info';
-            o.log = logger.info;
+            o.log = (...args)=>logger.info(JSON.stringify(args[0]));
         }
     } else {
         o.log = console.log; // 默认为控制台输出
