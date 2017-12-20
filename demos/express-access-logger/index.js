@@ -41,6 +41,9 @@ module.exports = (option = {})=> {
             },
             res: {},
         };
+        if (option.token) {
+            log.token = option.token(req);
+        }
 
         // 有响应的返回
         res.once('finish', responseCallback);
@@ -95,6 +98,19 @@ function getOption(option) {
     } else {
         o.log = console.log; // 默认为控制台输出
     }
+    // 获取token
+    if ('token' in option) {
+        const token = option.token;
+        if (token === false) {
+            o.token = (req)=>false;
+        } else if (typeof token === 'string') {
+            o.token = (req)=>req.header(token);
+        } else if (token instanceof Function) {
+            o.token = (req)=>token(req);
+        }
+    } else {
+        o.token = (req)=>req.header('authorization');
+    }
     return o;
 }
 
@@ -115,29 +131,31 @@ function getLog4js(config) {
  * @return {*}
  */
 function getLog4jsConfig(config) {
-    const path = require('path');
+    const defaultConfig = {
+        appenders: {
+            out: { // console-log
+                type: 'stdout',
+            }, access: { // access-log
+                type: 'dateFile',
+                filename: './logs/access.log', // 基于调用者地址的同级logs文件夹
+            },
+        }, categories: {
+            default: { // 解析器可能变更名称,直接使用default
+                appenders: ['access', 'out'],
+                level: 'info',
+            },
+        },
+    };
     if (config) {
-        return config;
+        if (typeof config === 'object' && Object.keys(config).length > 0) {
+            return config;
+        } else {
+            console.error(new Error('log4jsConfig must be an object !'));
+            return defaultConfig;
+        }
     } else {
         // log4js默认配置
-        return {
-            appenders: {
-                out: { // 控制台输出
-                    type: 'stdout',
-                }, access: {// 访问日志
-                    type: 'dateFile',
-                    filename: path.join(__dirname, './logs/access.log'),
-                },
-            }, categories: {
-                default: {
-                    appenders: ['access', 'out'],
-                    level: 'info',
-                }, access: {
-                    appenders: ['access', 'out'],
-                    level: 'info',
-                },
-            },
-        };
+        return defaultConfig;
     }
 }
 
