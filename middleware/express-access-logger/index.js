@@ -28,13 +28,14 @@ module.exports = (option = {})=> {
         const startedAt = process.hrtime(); // 获取高精度时间
         log = {
             uuid: req.header(option.uuid),
-            ip: getIP(req),
+            remoteIP: getIP(req),
             originalUrl: req.originalUrl,
-            method: req.method,
-            header: {
-                'Content-Type': req.header('Content-Type'),
-            },
+            appKey: option.appKey,
             req: {
+                method: req.method,
+                header: {
+                    'Content-Type': req.header('Content-Type'),
+                },
                 query: req.query,
                 body: req.body,
                 requestAt: new Date().format(TIME_FORMAT),
@@ -62,6 +63,9 @@ module.exports = (option = {})=> {
                 responseTime: calcResponseTime(startedAt),
                 responseAt: new Date().format(TIME_FORMAT),
             };
+            if (option.debug) {
+                console.log(log);
+            }
             option.log(log);
         }
     };
@@ -111,6 +115,15 @@ function getOption(option) {
     } else {
         o.token = (req)=>req.header('authorization');
     }
+    // 系统标记
+    if ('appKey' in option && typeof option.appKey === 'string') {
+        o.appKey = option.appKey;
+    } else {
+        console.error(new Error('缺少系统标记字段'));
+        o.appKey = 'DEFAULT-APP';
+    }
+    // 是否开启debug模式:直接输出json格式log
+    o.debug = 'debug' in option ? !!option.debug : true;
     return o;
 }
 
@@ -137,7 +150,10 @@ function getLog4jsConfig(config) {
                 type: 'stdout',
             }, access: { // access-log
                 type: 'dateFile',
-                filename: './logs/access.log', // 基于调用者地址的同级logs文件夹
+                filename: './logs/access/access.log', // 基于调用者地址的同级logs文件夹
+                pattern: '.yyyy-MM-dd', // 日志名格式
+                daysToKeep: '30', // 最长留存30天日志
+                keepFileExt: true, // 保证.log扩展名,即access.2017-09-21.log
             },
         }, categories: {
             default: { // 解析器可能变更名称,直接使用default
