@@ -14,3 +14,4 @@ package-lock.json
 # logs
 logs/*
 demos/*/logs/*.log
+middleware/*/logs/*/*.log
