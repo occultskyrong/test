@@ -10,6 +10,7 @@ node_modules/
 npm-debug.log
 npm-lock.log
 package-lock.json
+*/*/node_modules/
 
 # logs
 logs/*
