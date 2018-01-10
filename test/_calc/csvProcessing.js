@@ -24,7 +24,7 @@ const startLineNumber = 1; // 从第2行开始读取数据
  * @param {string} line
  */
 function lineTransform(line) {
-    const lineArr = line.split('","');
+    const lineArr = line.split(',"');
     const keyArr = ['time', 'x', 'y', 'z'];
     const lineObj = {};
     for (let i = 0, len = keyArr.length; i < len; i++) {

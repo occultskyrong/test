@@ -7,6 +7,7 @@
 'use strict';
 
 const calc = require('./calc');
+const writeCsv = require('./writeCsv');
 
 /**
  * 小文件数据处理运行方法
@@ -35,8 +36,9 @@ function smallTxtRun() {
                 const calcResult = calc(txt, csv);
                 resultJson.push(calcResult);
             }
-            console.info(resultJson);
+            return writeCsv(resultJson);
         })
+        .then(console.info)
         .catch(console.error);
 }
 

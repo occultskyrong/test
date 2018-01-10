@@ -38,30 +38,30 @@ function add(...args) {
  * @return {{}}
  */
 function calc(txt, csv) {
+    const {fx12, fx34, fy14, fy23, fz1, fz2, fz3, fz4}=txt;
     const {x, y, z}=csv;
     // console.info(txt, csv);
-    const fx = add(txt.fx12, txt.fx34);
-    const fy = add(txt.fy14, txt.fy23);
-    const fz = add(txt.fz1, txt.fz2, txt.fz3, txt.fz4);
+    const fx = add(fx12, fx34);
+    const fy = add(fy14, fy23);
+    const fz = add(fz1, fz2, fz3, fz4);
     const mx = -y * (p - z)
-        - add(txt.fz1, txt.fz4) * (y - n - a)
-        - add(txt.fz2, txt.fz3) * add(y - n, a);
+        - add(fz1, fz4) * (y - n - a)
+        - add(fz2, fz3) * add(y - n, a);
     const my = x * (p - z)
-        + add(txt.fz1, txt.fz2) * (x - m - b)
-        + add(txt.fz3, txt.fz4) * add(x - m, b);
-    const mz = txt.fx12 * (y - add(n, a))
-        + txt.fx34 * add(y - n, a)
-        + txt.fy14 * (add(m, b) - x)
-        - txt.fy23 * add(x - m, b);
+        + add(fz1, fz2) * (x - m - b)
+        + add(fz3, fz4) * add(x - m, b);
+    const mz = fx12 * (y - add(n, a))
+        + fx34 * add(y - n, a)
+        + fy14 * (add(m, b) - x)
+        - fy23 * add(x - m, b);
 
-    const obj = {
-        fx, fy, fz, mx, my, mz,
-    };
-    let result = {};
-    Object.keys(obj).forEach((key)=> {
-        result[key] = parseFloat(parseFloat(obj[key]).toFixed(6));
+    Object.assign(txt, {
+        x, y, z, fx, fy, fz, mx, my, mz,
     });
-
+    let result = {};
+    Object.keys(txt).forEach((key)=> {
+        result[key] = parseFloat(parseFloat(txt[key]).toFixed(6));
+    });
     return result;
 }
 
