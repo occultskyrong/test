@@ -15,6 +15,10 @@
   },
   "homepage": "https://github.com/occultskyrong/test#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "express-access-logger": "^0.0.6",
+    "request": "^2.85.0"
   }
 }

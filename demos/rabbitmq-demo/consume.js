@@ -22,6 +22,7 @@ connection
                     channel.bindQueue(q.queue, ex, key); // 绑定队列
                 });
                 channel.consume(q.queue, (msg)=> {
+                    console.info(msg)
                     console.info('收到消息:', msg.fields.routingKey, msg.content.toString());
                 }, {noAck: true});
             })

@@ -16,7 +16,11 @@ connection
         setInterval(()=> {
             const str = `[${new Date()}] --- 消息`;
             console.info('发送消息:', str);
-            channel.publish(ex, 'key11', new Buffer(str));
+            channel.publish(ex, 'key.11', new Buffer(str), {
+                headers: {
+                    'auth-token': '测试',
+                },
+            });
         }, 1000);
     })
     .catch(console.error);
